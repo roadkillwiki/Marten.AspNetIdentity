@@ -3,16 +3,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Marten;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace MartenAspNetIdentity
 {
 	public class MartenRoleStore<TRole> : IRoleStore<TRole> where TRole : IdentityRole
 	{
 		private readonly IDocumentStore _documentStore;
+		private readonly ILogger _logger;
 
-		public MartenRoleStore(IDocumentStore documentStore)
+		public MartenRoleStore(IDocumentStore documentStore, ILogger<MartenRoleStore<TRole>> logger)
 		{
 			_documentStore = documentStore;
+			_logger = logger;
 		}
 
 		public void Dispose()
@@ -21,34 +24,58 @@ namespace MartenAspNetIdentity
 
 		public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
 		{
-			using (IDocumentSession session = _documentStore.OpenSession())
+			try
 			{
-				session.Store(role);
-				await session.SaveChangesAsync(cancellationToken);
+				using (IDocumentSession session = _documentStore.OpenSession())
+				{
+					session.Store(role);
+					await session.SaveChangesAsync(cancellationToken);
 
-				return new IdentityResult();
+					return IdentityResult.Success;
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Failed to create the role in Marten.");
+				return IdentityResult.Failed(new IdentityError() { Description = "Something went wrong saving the role." });
 			}
 		}
 
 		public async Task<IdentityResult> UpdateAsync(TRole role, CancellationToken cancellationToken)
 		{
-			using (IDocumentSession session = _documentStore.OpenSession())
+			try
 			{
-				session.Update(role);
-				await session.SaveChangesAsync(cancellationToken);
+				using (IDocumentSession session = _documentStore.OpenSession())
+				{
+					session.Update(role);
+					await session.SaveChangesAsync(cancellationToken);
 
-				return new IdentityResult();
+					return IdentityResult.Success;
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Failed to update the role in Marten.");
+				return IdentityResult.Failed(new IdentityError() { Description = "Something went wrong saving the role." });
 			}
 		}
 
 		public async Task<IdentityResult> DeleteAsync(TRole role, CancellationToken cancellationToken)
 		{
-			using (IDocumentSession session = _documentStore.OpenSession())
+			try
 			{
-				session.Delete(role);
-				await session.SaveChangesAsync(cancellationToken);
+				using (IDocumentSession session = _documentStore.OpenSession())
+				{
+					session.Delete(role);
+					await session.SaveChangesAsync(cancellationToken);
 
-				return new IdentityResult();
+					return IdentityResult.Success;
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Failed to delete the role in Marten.");
+				return IdentityResult.Failed(new IdentityError() { Description = "Something went wrong deleting the role." });
 			}
 		}
 
@@ -77,12 +104,7 @@ namespace MartenAspNetIdentity
 
 		public async Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken)
 		{
-			using (IDocumentSession session = _documentStore.OpenSession())
-			{
-				role.Name = roleName;
-				session.Update(role);
-				await session.SaveChangesAsync(cancellationToken);
-			}
+			role.Name = roleName;
 		}
 
 		public Task<string> GetNormalizedRoleNameAsync(TRole role, CancellationToken cancellationToken)

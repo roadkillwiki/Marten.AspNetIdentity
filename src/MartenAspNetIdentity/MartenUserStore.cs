@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Marten;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace MartenAspNetIdentity
 {
@@ -18,10 +19,12 @@ namespace MartenAspNetIdentity
 										where TUser : IdentityUser
 	{
 		private readonly IDocumentStore _documentStore;
+		private readonly ILogger _logger;
 
-		public MartenUserStore(IDocumentStore documentStore)
+		public MartenUserStore(IDocumentStore documentStore, ILogger<MartenUserStore<TUser>> logger)
 		{
 			_documentStore = documentStore;
+			_logger = logger;
 		}
 
 		public async Task<string> GetUserIdAsync(TUser user, CancellationToken cancellationToken)
@@ -62,7 +65,8 @@ namespace MartenAspNetIdentity
 			}
 			catch (Exception ex)
 			{
-				return IdentityResult.Failed(new IdentityError() { Description = "Failed to create the user in Marten. " + ex.Message });
+				_logger.LogError(ex, "Failed to create the user in Marten.");
+				return IdentityResult.Failed(new IdentityError() { Description = "Something went wrong saving the user." });
 			}
 		}
 
@@ -79,7 +83,8 @@ namespace MartenAspNetIdentity
 			}
 			catch (Exception ex)
 			{
-				return IdentityResult.Failed(new IdentityError() { Description = "Failed to update the user in Marten." });
+				_logger.LogError(ex, "Failed to update the user in Marten.");
+				return IdentityResult.Failed(new IdentityError() { Description = "Something went wrong saving the user." });
 			}
 		}
 
@@ -96,7 +101,8 @@ namespace MartenAspNetIdentity
 			}
 			catch (Exception ex)
 			{
-				return IdentityResult.Failed(new IdentityError() { Description = "Failed to delete the user in Marten." });
+				_logger.LogError(ex, "Failed to delete the user in Marten.");
+				return IdentityResult.Failed(new IdentityError() { Description = "Something went wrong deleting the user." });
 			}
 		}
 

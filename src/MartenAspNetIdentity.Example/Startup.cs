@@ -23,13 +23,11 @@ namespace Examples.MvcSecurity
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddDbContext<ApplicationDbContext>(options =>
-				options.UseInMemoryDatabase("chris"));
+			services.AddLogging();
 
 			string connectionString = "server=localhost;database=aspnetidentity;uid=aspnetidentity;pwd=aspnetidentity;";
 
 			services.AddIdentity<ApplicationUser, IdentityRole>()
-				//.AddEntityFrameworkStores<ApplicationDbContext>()
 				.AddMartenStores<ApplicationUser, IdentityRole>(connectionString)
 				.AddDefaultTokenProviders();
 
