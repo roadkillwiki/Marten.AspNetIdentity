@@ -27,29 +27,31 @@ namespace MartenAspNetIdentity
 			_logger = logger;
 		}
 
-		public async Task<string> GetUserIdAsync(TUser user, CancellationToken cancellationToken)
+		public Task<string> GetUserIdAsync(TUser user, CancellationToken cancellationToken)
 		{
-			return user.Id;
+			return Task.FromResult(user.Id);
 		}
 
-		public async Task<string> GetUserNameAsync(TUser user, CancellationToken cancellationToken)
+		public Task<string> GetUserNameAsync(TUser user, CancellationToken cancellationToken)
 		{
-			return user.UserName;
+			return Task.FromResult(user.UserName);
 		}
 
-		public async Task SetUserNameAsync(TUser user, string userName, CancellationToken cancellationToken)
+		public Task SetUserNameAsync(TUser user, string userName, CancellationToken cancellationToken)
 		{
 			user.UserName = userName;
+			return Task.CompletedTask;
 		}
 
-		public async Task<string> GetNormalizedUserNameAsync(TUser user, CancellationToken cancellationToken)
+		public Task<string> GetNormalizedUserNameAsync(TUser user, CancellationToken cancellationToken)
 		{
-			return user.NormalizedUserName;
+			return Task.FromResult(user.NormalizedUserName);
 		}
 
-		public async Task SetNormalizedUserNameAsync(TUser user, string normalizedName, CancellationToken cancellationToken)
+		public Task SetNormalizedUserNameAsync(TUser user, string normalizedName, CancellationToken cancellationToken)
 		{
 			user.NormalizedUserName = normalizedName;
+			return Task.CompletedTask;
 		}
 
 		public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
@@ -128,42 +130,45 @@ namespace MartenAspNetIdentity
 
 		// IUserPasswordStore
 
-		public async Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken)
+		public Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken)
 		{
 			user.PasswordHash = passwordHash;
+			return Task.CompletedTask;
 		}
 
-		public async Task<string> GetPasswordHashAsync(TUser user, CancellationToken cancellationToken)
+		public Task<string> GetPasswordHashAsync(TUser user, CancellationToken cancellationToken)
 		{
-			return user.PasswordHash;
+			return Task.FromResult(user.PasswordHash);
 		}
 
-		public async Task<bool> HasPasswordAsync(TUser user, CancellationToken cancellationToken)
+		public Task<bool> HasPasswordAsync(TUser user, CancellationToken cancellationToken)
 		{
 			bool hasPassword = !string.IsNullOrEmpty(user.PasswordHash);
-			return hasPassword;
+			return Task.FromResult(hasPassword);
 		}
 
 		// IUserEmailStore
 
-		public async Task SetEmailAsync(TUser user, string email, CancellationToken cancellationToken)
+		public Task SetEmailAsync(TUser user, string email, CancellationToken cancellationToken)
 		{
 			user.Email = email;
+			return Task.CompletedTask;
 		}
 
-		public async Task<string> GetEmailAsync(TUser user, CancellationToken cancellationToken)
+		public Task<string> GetEmailAsync(TUser user, CancellationToken cancellationToken)
 		{
-			return user.Email;
+			return Task.FromResult(user.Email);
 		}
 
-		public async Task<bool> GetEmailConfirmedAsync(TUser user, CancellationToken cancellationToken)
+		public Task<bool> GetEmailConfirmedAsync(TUser user, CancellationToken cancellationToken)
 		{
-			return user.EmailConfirmed;
+			return Task.FromResult(user.EmailConfirmed);
 		}
 
-		public async Task SetEmailConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
+		public Task SetEmailConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
 		{
 			user.EmailConfirmed = confirmed;
+			return Task.CompletedTask;
 		}
 
 		public async Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
@@ -174,75 +179,81 @@ namespace MartenAspNetIdentity
 			}
 		}
 
-		public async Task<string> GetNormalizedEmailAsync(TUser user, CancellationToken cancellationToken)
+		public Task<string> GetNormalizedEmailAsync(TUser user, CancellationToken cancellationToken)
 		{
-			return user.NormalizedEmail;
+			return Task.FromResult(user.NormalizedEmail);
 		}
 
-		public async Task SetNormalizedEmailAsync(TUser user, string normalizedEmail, CancellationToken cancellationToken)
+		public Task SetNormalizedEmailAsync(TUser user, string normalizedEmail, CancellationToken cancellationToken)
 		{
 			user.NormalizedEmail = normalizedEmail;
+			return Task.CompletedTask;
 		}
 
 		// IUserPhoneNumberStore
 
-		public async Task SetPhoneNumberAsync(TUser user, string phoneNumber, CancellationToken cancellationToken)
+		public Task SetPhoneNumberAsync(TUser user, string phoneNumber, CancellationToken cancellationToken)
 		{
 			user.PhoneNumber = phoneNumber;
+			return Task.CompletedTask;
 		}
 
-		public async Task<string> GetPhoneNumberAsync(TUser user, CancellationToken cancellationToken)
+		public Task<string> GetPhoneNumberAsync(TUser user, CancellationToken cancellationToken)
 		{
-			return user.PhoneNumber;
+			return Task.FromResult(user.PhoneNumber);
 		}
 
-		public async Task<bool> GetPhoneNumberConfirmedAsync(TUser user, CancellationToken cancellationToken)
+		public Task<bool> GetPhoneNumberConfirmedAsync(TUser user, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException();
+			return Task.FromResult(user.PhoneNumberConfirmed);
 		}
 
-		public async Task SetPhoneNumberConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
+		public Task SetPhoneNumberConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
 		{
 			user.PhoneNumberConfirmed = confirmed;
+			return Task.CompletedTask;
 		}
 
 		// IUserTwoFactorStore
 
-		public async Task SetTwoFactorEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken)
+		public Task SetTwoFactorEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken)
 		{
 			user.TwoFactorEnabled = enabled;
+			return Task.CompletedTask;
 		}
 
-		public async Task<bool> GetTwoFactorEnabledAsync(TUser user, CancellationToken cancellationToken)
+		public Task<bool> GetTwoFactorEnabledAsync(TUser user, CancellationToken cancellationToken)
 		{
-			return user.TwoFactorEnabled;
+			return Task.FromResult(user.TwoFactorEnabled);
 		}
 
 		// IUserAuthenticatorKeyStore
 
-		public async Task SetAuthenticatorKeyAsync(TUser user, string key, CancellationToken cancellationToken)
+		public Task SetAuthenticatorKeyAsync(TUser user, string key, CancellationToken cancellationToken)
 		{
+			return Task.CompletedTask;
 		}
 
-		public async Task<string> GetAuthenticatorKeyAsync(TUser user, CancellationToken cancellationToken)
+		public Task<string> GetAuthenticatorKeyAsync(TUser user, CancellationToken cancellationToken)
 		{
-			return "12345123451234512345";
+			return Task.FromResult("1234123412");
 		}
 
 		// IUserTwoFactorRecoveryCodeStore
 
-		public async Task ReplaceCodesAsync(TUser user, IEnumerable<string> recoveryCodes, CancellationToken cancellationToken)
+		public Task ReplaceCodesAsync(TUser user, IEnumerable<string> recoveryCodes, CancellationToken cancellationToken)
 		{
+			return Task.CompletedTask;
 		}
 
-		public async Task<bool> RedeemCodeAsync(TUser user, string code, CancellationToken cancellationToken)
+		public Task<bool> RedeemCodeAsync(TUser user, string code, CancellationToken cancellationToken)
 		{
-			return true;
+			return Task.FromResult(false);
 		}
 
-		public async Task<int> CountCodesAsync(TUser user, CancellationToken cancellationToken)
+		public Task<int> CountCodesAsync(TUser user, CancellationToken cancellationToken)
 		{
-			return 5;
+			return Task.FromResult(5);
 		}
 	}
 }

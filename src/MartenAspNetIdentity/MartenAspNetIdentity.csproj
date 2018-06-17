@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Description>A Marten implementation of the ASP.NET Core Identity stores.</Description>
+    <PackageProjectUrl>https://github.com/yetanotherchris/MartenAspNetIdentity</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/yetanotherchris/MartenAspNetIdentity</RepositoryUrl>
+    <PackageTags>marten aspnetidentity</PackageTags>
+    <Version>1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

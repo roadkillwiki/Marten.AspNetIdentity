@@ -1,0 +1,21 @@
+# https://docs.travis-ci.com/user/environment-variables/
+language: csharp
+dotnet: 2.0.0
+
+branches:
+  only:
+  - master
+
+services:
+  - docker
+
+addons:
+  postgresql: "9.5"
+
+script:
+   - dotnet restore
+   - dotnet build -c Release  
+   - pushd src/Syringe.Tests
+   - docker run -d -p 5432:5432 --name aspnetidentity-postgres -e POSTGRES_USER=aspnetidentity -e POSTGRES_PASSWORD=aspnetidentity postgres
+   - dotnet test
+   - dotnet pack

@@ -102,24 +102,30 @@ namespace MartenAspNetIdentity
 			}
 		}
 
-		public async Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken)
+		public Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken)
 		{
 			role.Name = roleName;
+			return Task.CompletedTask;
 		}
 
 		public Task<string> GetNormalizedRoleNameAsync(TRole role, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException();
+			return Task.FromResult(role.NormalizedName);
 		}
 
 		public Task SetNormalizedRoleNameAsync(TRole role, string normalizedName, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException();
+			role.NormalizedName = normalizedName;
+			return Task.CompletedTask;
 		}
 
-		public Task<TRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
+		public async Task<TRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException();
+			using (IDocumentSession session = _documentStore.LightweightSession())
+			{
+				var actualRole = await session.Query<TRole>().FirstOrDefaultAsync(x => x.Id == roleId, cancellationToken);
+				return actualRole;
+			}
 		}
 
 		public async Task<TRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
