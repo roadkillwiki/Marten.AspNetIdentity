@@ -19,7 +19,6 @@ namespace Examples.MvcSecurity
 
 		public IConfiguration Configuration { get; }
 
-		// docker run -d -p 5432:5432 --name aspnetidentity-postgres -e POSTGRES_USER=aspnetidentity -e POSTGRES_PASSWORD=aspnetidentity postgres
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{

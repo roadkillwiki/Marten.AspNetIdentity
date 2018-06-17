@@ -122,9 +122,13 @@ namespace MartenAspNetIdentity
 			throw new NotImplementedException();
 		}
 
-		public Task<TRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
+		public async Task<TRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException();
+			using (IDocumentSession session = _documentStore.LightweightSession())
+			{
+				var actualRole = await session.Query<TRole>().FirstOrDefaultAsync(x => x.NormalizedName == normalizedRoleName, cancellationToken);
+				return actualRole;
+			}
 		}
 	}
 }

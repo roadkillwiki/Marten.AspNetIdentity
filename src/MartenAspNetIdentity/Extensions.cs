@@ -8,6 +8,14 @@ namespace MartenAspNetIdentity
 {
 	public static class Extensions
 	{
+		/// <summary>
+		/// Adds the stores to the service container, plus a IDocumentStore as a singleton, using the provided connection string.
+		/// </summary>
+		/// <typeparam name="TUser"></typeparam>
+		/// <typeparam name="TRole"></typeparam>
+		/// <param name="builder"></param>
+		/// <param name="postgresConnectionString"></param>
+		/// <returns></returns>
 		public static IdentityBuilder AddMartenStores<TUser, TRole>(this IdentityBuilder builder, string postgresConnectionString)
 													where TUser : IdentityUser
 													where TRole : IdentityRole
@@ -31,9 +39,9 @@ namespace MartenAspNetIdentity
 						  .AddUserStore<MartenUserStore<TUser>>();
 		}
 
-		internal static IDocumentStore CreateDocumentStore(string connectionString)
+		public static IDocumentStore CreateDocumentStore(string connectionString, string databaseSchemaName = "aspnetidentity",
+														 string databaseOwner = "aspnetidentity", int connectionLimit = -1)
 		{
-			string databaseOwner = "aspnetidentity";
 			var documentStore = DocumentStore.For(options =>
 			{
 				options.CreateDatabasesForTenants(c =>
@@ -43,15 +51,17 @@ namespace MartenAspNetIdentity
 						.CheckAgainstPgDatabase()
 						.WithOwner(databaseOwner)
 						.WithEncoding("UTF-8")
-						.ConnectionLimit(-1)
+						.ConnectionLimit(connectionLimit)
 						.OnDatabaseCreated(_ =>
 						{
 							Console.WriteLine($"Postgres '{_.Database}' database created");
 						});
 				});
 
+				options.DatabaseSchemaName = databaseSchemaName;
 				options.Connection(connectionString);
 				options.Schema.For<IdentityRole>().Index(x => x.Id);
+				options.Schema.For<IdentityUser>().Index(x => x.Id);
 			});
 
 			return documentStore;
