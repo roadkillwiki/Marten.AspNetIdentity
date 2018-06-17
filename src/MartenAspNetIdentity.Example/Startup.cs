@@ -1,14 +1,12 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Examples.MvcSecurity.Data;
 using Examples.MvcSecurity.Services;
+using MartenAspNetIdentity;
 
 namespace Examples.MvcSecurity
 {
@@ -21,14 +19,18 @@ namespace Examples.MvcSecurity
 
 		public IConfiguration Configuration { get; }
 
+		// docker run -d -p 5432:5432 --name aspnetidentity-postgres -e POSTGRES_USER=aspnetidentity -e POSTGRES_PASSWORD=aspnetidentity postgres
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseInMemoryDatabase("chris"));
 
+			string connectionString = "server=localhost;database=aspnetidentity;uid=aspnetidentity;pwd=aspnetidentity;";
+
 			services.AddIdentity<ApplicationUser, IdentityRole>()
-				.AddEntityFrameworkStores<ApplicationDbContext>()
+				//.AddEntityFrameworkStores<ApplicationDbContext>()
+				.AddMartenStores<ApplicationUser, IdentityRole>(connectionString)
 				.AddDefaultTokenProviders();
 
 			services.AddMvc()
