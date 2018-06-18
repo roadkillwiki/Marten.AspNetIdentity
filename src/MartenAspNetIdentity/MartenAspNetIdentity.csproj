@@ -6,7 +6,6 @@
     <PackageProjectUrl>https://github.com/yetanotherchris/MartenAspNetIdentity</PackageProjectUrl>
     <RepositoryUrl>https://github.com/yetanotherchris/MartenAspNetIdentity</RepositoryUrl>
     <PackageTags>marten aspnetidentity</PackageTags>
-    <Version>1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
