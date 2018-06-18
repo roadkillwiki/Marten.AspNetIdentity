@@ -8,12 +8,18 @@ branches:
 
 services:
   - docker
+  - postgresql
+
+addons:
+  postgresql: "9.5"
+
+before_script:
+  - psql -c 'create database aspnetidentity;' -U aspnetidentity -P aspnetidentity
 
 script:
    - dotnet restore
    - dotnet build -c Release  
    - pushd src/MartenAspNetIdentity.Tests
-   - docker run -d -p 5432:5432 --name aspnetidentity-postgres -e POSTGRES_USER=aspnetidentity -e POSTGRES_PASSWORD=aspnetidentity postgres
    - dotnet test
    - popd
    - dotnet pack -c Release /p:PackageVersion=1.0.$TRAVIS_BUILD_NUMBER
