@@ -14,7 +14,7 @@ addons:
   postgresql: "9.5"
 
 before_script:
-  - psql -c 'create database aspnetidentity;' -U aspnetidentity -P aspnetidentity
+  - psql -c 'create database aspnetidentity;' -U aspnetidentity
 
 script:
    - dotnet restore
