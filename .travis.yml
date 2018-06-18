@@ -9,9 +9,6 @@ branches:
 services:
   - docker
 
-addons:
-  postgresql: "9.5"
-
 script:
    - dotnet restore
    - dotnet build -c Release  
