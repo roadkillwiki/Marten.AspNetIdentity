@@ -51,7 +51,7 @@ namespace MartenAspNetIdentity.Tests.Unit
 			var identityRole = new IdentityRole("chief bin collector");
 
 			// when
-			string roleName = await _roleStore.GetRoleIdAsync(identityRole, CancellationToken.None);
+			string roleName = await _roleStore.GetRoleNameAsync(identityRole, CancellationToken.None);
 
 			// then
 			roleName.ShouldBe(identityRole.Name);
@@ -69,6 +69,34 @@ namespace MartenAspNetIdentity.Tests.Unit
 
 			// then
 			identityRole.Name.ShouldBe(expectedRoleName);
+		}
+
+		[Fact]
+		public async Task GetNormalizedRoleNameAsync()
+		{
+			// given
+			var identityRole = new IdentityRole("chief bin collector");
+			identityRole.NormalizedName = "normalized name";
+
+			// when
+			string normalizedName = await _roleStore.GetNormalizedRoleNameAsync(identityRole, CancellationToken.None);
+
+			// then
+			normalizedName.ShouldBe(identityRole.NormalizedName);
+		}
+
+		[Fact]
+		public async Task SetNormalizedRoleNameAsync()
+		{
+			// given
+			var identityRole = new IdentityRole("chief bin collector");
+			string expectedNormalizedName = "CHIEFBINCOLLECTOR";
+
+			// when
+			await _roleStore.SetNormalizedRoleNameAsync(identityRole, expectedNormalizedName, CancellationToken.None);
+
+			// then
+			identityRole.NormalizedName.ShouldBe(expectedNormalizedName);
 		}
 	}
 }
