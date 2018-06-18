@@ -6,16 +6,22 @@ using Xunit;
 using Shouldly;
 using Xunit.Abstractions;
 
-namespace MartenAspNetIdentity.Tests
+namespace MartenAspNetIdentity.Tests.Integration
 {
 	public class MartenRoleStoreTests
 	{
-		private MartenRoleStore<IdentityRole> _roleStore;
-		// docker run -d -p 5432:5432 --name aspnetidentity-postgres -e POSTGRES_USER=aspnetidentity -e POSTGRES_PASSWORD=aspnetidentity postgres
+		//
+		// These tests require a postgres server, the Docker command is:
+		//
+		// $> docker run -d -p 5432:5432 --name aspnetidentity-postgres -e POSTGRES_USER=aspnetidentity -e POSTGRES_PASSWORD=aspnetidentity postgres
+		//
 
-		public MartenRoleStoreTests(ITestOutputHelper testOutput)
+		private readonly ITestOutputHelper _testOutputHelper;
+		private MartenRoleStore<IdentityRole> _roleStore;
+
+		public MartenRoleStoreTests(ITestOutputHelper testOutputHelper)
 		{
-			testOutput.WriteLine("test");
+			_testOutputHelper = testOutputHelper;
 			var store = DocumentStoreManager.GetMartenDocumentStore(typeof(MartenRoleStoreTests));
 			_roleStore = new MartenRoleStore<IdentityRole>(store, new NullLogger<MartenRoleStore<IdentityRole>>());
 		}

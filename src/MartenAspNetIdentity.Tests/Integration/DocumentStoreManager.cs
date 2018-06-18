@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using Marten;
 
-namespace MartenAspNetIdentity.Tests
+namespace MartenAspNetIdentity.Tests.Integration
 {
 	public class DocumentStoreManager
 	{
