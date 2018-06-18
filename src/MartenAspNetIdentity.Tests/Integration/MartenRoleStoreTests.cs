@@ -84,5 +84,9 @@ namespace MartenAspNetIdentity.Tests.Integration
 			role.ShouldNotBeNull();
 			role.Name.ShouldBe(updatedRole.Name);
 		}
+
+		// FindByNameAsync
+		// FindByIdAsync
+		// FindByNameAsync
 	}
 }
