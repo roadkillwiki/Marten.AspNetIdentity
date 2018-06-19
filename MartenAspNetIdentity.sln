@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2018
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MartenAspNetIdentity.Example", "src\MartenAspNetIdentity.Example\MartenAspNetIdentity.Example.csproj", "{68EC149D-5DEB-49D5-8B81-ACEFCC71F114}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Marten.AspNetIdentity.Example", "src\Marten.AspNetIdentity.Example\Marten.AspNetIdentity.Example.csproj", "{68EC149D-5DEB-49D5-8B81-ACEFCC71F114}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MartenAspNetIdentity", "src\MartenAspNetIdentity\MartenAspNetIdentity.csproj", "{B7C1E7ED-E9CC-4CA5-8346-A4C9A4F3140F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Marten.AspNetIdentity", "src\Marten.AspNetIdentity\Marten.AspNetIdentity.csproj", "{B7C1E7ED-E9CC-4CA5-8346-A4C9A4F3140F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MartenAspNetIdentity.Tests", "src\MartenAspNetIdentity.Tests\MartenAspNetIdentity.Tests.csproj", "{2A1A9E01-E6A4-445A-8150-094799152579}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marten.AspNetIdentity.Tests", "src\Marten.AspNetIdentity.Tests\Marten.AspNetIdentity.Tests.csproj", "{2A1A9E01-E6A4-445A-8150-094799152579}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

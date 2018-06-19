@@ -21,8 +21,8 @@ before_script:
 script:
    - dotnet restore
    - dotnet build -c Release  
-   - pushd src/MartenAspNetIdentity.Tests
+   - pushd src/Marten.AspNetIdentity.Tests
    - dotnet test
    - popd
    - dotnet pack -c Release /p:PackageVersion=1.0.$TRAVIS_BUILD_NUMBER
-   - dotnet nuget push "src/MartenAspNetIdentity/bin/Release/MartenAspNetIdentity.1.0.$TRAVIS_BUILD_NUMBER.nupkg" --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json
+   - dotnet nuget push "src/Marten.AspNetIdentity/bin/Release/Marten.AspNetIdentity.1.0.$TRAVIS_BUILD_NUMBER.nupkg" --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json
