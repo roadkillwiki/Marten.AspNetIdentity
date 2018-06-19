@@ -32,7 +32,7 @@ namespace MartenAspNetIdentity.Tests.Integration
 			_roleStore = new MartenRoleStore<IdentityRole>(store, new NullLogger<MartenRoleStore<IdentityRole>>());
 		}
 
-		public async Task<List<IdentityRole>> Add5Roles()
+		public async Task<List<IdentityRole>> AddFiveRoles()
 		{
 			var rolesList = new List<IdentityRole>();
 			for (int i = 1; i <= 5; i++)
@@ -69,7 +69,7 @@ namespace MartenAspNetIdentity.Tests.Integration
 		public async Task UpdateAsync()
 		{
 			// given
-			List<IdentityRole> rolesList = await Add5Roles();
+			List<IdentityRole> rolesList = await AddFiveRoles();
 
 			IdentityRole updatedRole = rolesList.First();
 			updatedRole.Name = "A new name";

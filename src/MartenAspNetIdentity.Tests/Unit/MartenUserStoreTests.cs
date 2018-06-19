@@ -37,8 +37,7 @@ namespace MartenAspNetIdentity.Tests.Unit
 		public async Task GetRoleIdAsync()
 		{
 			// given
-			var identityUser = new IdentityUser("my root user");
-			identityUser.Id = "my id";
+			var identityUser = _fixture.Create<IdentityUser>();
 
 			// when
 			string id = await _userStore.GetUserIdAsync(identityUser, CancellationToken.None);
@@ -51,7 +50,7 @@ namespace MartenAspNetIdentity.Tests.Unit
 		public async Task SetRoleNameAsync()
 		{
 			// given
-			var identityUser = new IdentityUser("my root user");
+			var identityUser = _fixture.Create<IdentityUser>();
 			string expectedUsername = "new user name";
 
 			// when
@@ -65,202 +64,206 @@ namespace MartenAspNetIdentity.Tests.Unit
 		public async Task GetNormalizedUserNameAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
 
 			// when
+			string normalizedUserName = await _userStore.GetNormalizedUserNameAsync(identityUser, CancellationToken.None);
 
 			// then
+			normalizedUserName.ShouldBe(identityUser.NormalizedUserName);
 		}
 
 		[Fact]
 		public async Task SetNormalizedUserNameAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
+			string normalizedUsername = "NORMALIZEDNAME";
 
 			// when
+			await _userStore.SetNormalizedUserNameAsync(identityUser, normalizedUsername, CancellationToken.None);
 
 			// then
-		}
-
-		[Fact]
-		public async Task FindByIdAsync()
-		{
-			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
-
-			// when
-
-			// then
-		}
-
-		[Fact]
-		public async Task FindByNameAsync()
-		{
-			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
-
-			// when
-
-			// then
+			identityUser.NormalizedUserName.ShouldBe(normalizedUsername);
 		}
 
 		[Fact]
 		public async Task SetPasswordHashAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
+			string passwordHash = "Password Hash";
 
 			// when
+			await _userStore.SetPasswordHashAsync(identityUser, passwordHash, CancellationToken.None);
 
 			// then
+			identityUser.PasswordHash.ShouldBe(passwordHash);
 		}
 
 		[Fact]
 		public async Task GetPasswordHashAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
 
 			// when
+			string passwordHash = await _userStore.GetPasswordHashAsync(identityUser, CancellationToken.None);
 
 			// then
+			passwordHash.ShouldBe(identityUser.PasswordHash);
 		}
 
 		[Fact]
 		public async Task HasPasswordAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
 
 			// when
+			bool hasPasswordHash = await _userStore.HasPasswordAsync(identityUser, CancellationToken.None);
 
 			// then
+			hasPasswordHash.ShouldBeTrue();
 		}
 
 		[Fact]
 		public async Task SetEmailAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
+			string email = "billgates@microsoft.com";
 
 			// when
+			await _userStore.SetEmailAsync(identityUser, email, CancellationToken.None);
 
 			// then
+			identityUser.Email.ShouldBe(email);
 		}
 
 		[Fact]
 		public async Task GetEmailAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
 
 			// when
+			string email = await _userStore.GetEmailAsync(identityUser, CancellationToken.None);
 
 			// then
+			email.ShouldBe(identityUser.Email);
 		}
 
 		[Fact]
 		public async Task GetEmailConfirmedAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
+			identityUser.EmailConfirmed = true;
 
 			// when
+			bool emailConfirmed = await _userStore.GetEmailConfirmedAsync(identityUser, CancellationToken.None);
 
 			// then
+			emailConfirmed.ShouldBe(identityUser.EmailConfirmed);
 		}
 
 		[Fact]
 		public async Task SetEmailConfirmedAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
+			bool confirmed = true;
 
 			// when
+			await _userStore.SetEmailConfirmedAsync(identityUser, confirmed, CancellationToken.None);
 
 			// then
-		}
-
-		[Fact]
-		public async Task FindByEmailAsync()
-		{
-			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
-
-			// when
-
-			// then
+			identityUser.EmailConfirmed.ShouldBe(confirmed);
 		}
 
 		[Fact]
 		public async Task GetNormalizedEmailAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
 
 			// when
+			string normalizedEmail = await _userStore.GetNormalizedEmailAsync(identityUser, CancellationToken.None);
 
 			// then
+			normalizedEmail.ShouldBe(identityUser.NormalizedEmail);
 		}
 
 		[Fact]
 		public async Task SetNormalizedEmailAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
+			string normalizedEmail = "NORMALIZEDNAME";
 
 			// when
+			await _userStore.SetNormalizedEmailAsync(identityUser, normalizedEmail, CancellationToken.None);
 
 			// then
+			identityUser.NormalizedEmail.ShouldBe(normalizedEmail);
 		}
 
 		[Fact]
 		public async Task SetPhoneNumberAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
+			string phoneNumber = "0800505050";
 
 			// when
+			await _userStore.SetPhoneNumberAsync(identityUser, phoneNumber, CancellationToken.None);
 
 			// then
+			identityUser.PhoneNumber.ShouldBe(phoneNumber);
 		}
 
 		[Fact]
 		public async Task GetPhoneNumberAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
 
 			// when
+			string phoneNumber = await _userStore.GetPhoneNumberAsync(identityUser, CancellationToken.None);
 
 			// then
+			phoneNumber.ShouldBe(identityUser.PhoneNumber);
 		}
 
 		[Fact]
 		public async Task GetPhoneNumberConfirmedAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
+			identityUser.PhoneNumberConfirmed = true;
 
 			// when
+			bool emailConfirmed = await _userStore.GetPhoneNumberConfirmedAsync(identityUser, CancellationToken.None);
 
 			// then
+			emailConfirmed.ShouldBe(identityUser.PhoneNumberConfirmed);
 		}
 
 		[Fact]
 		public async Task SetPhoneNumberConfirmedAsync()
 		{
 			// given
-			IdentityUser user = _fixture.Create<IdentityUser>();
+			var identityUser = _fixture.Create<IdentityUser>();
+			bool confirmed = true;
 
 			// when
+			await _userStore.SetPhoneNumberConfirmedAsync(identityUser, confirmed, CancellationToken.None);
 
 			// then
+			identityUser.PhoneNumberConfirmed.ShouldBe(confirmed);
 		}
 
-		// SetTwoFactorEnabledAsync
-		// GetTwoFactorEnabledAsync
-		//
+		// TODO: two factor auth
 	}
 }

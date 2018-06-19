@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoFixture;
 using Marten;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -22,9 +23,11 @@ namespace MartenAspNetIdentity.Tests.Unit
 		private readonly ITestOutputHelper _testOutputHelper;
 		private MartenRoleStore<IdentityRole> _roleStore;
 		private Mock<IDocumentStore> _documentStore;
+		private readonly Fixture _fixture;
 
 		public MartenRoleStoreTests(ITestOutputHelper testOutputHelper)
 		{
+			_fixture = new Fixture();
 			_testOutputHelper = testOutputHelper;
 			_documentStore = new Mock<IDocumentStore>();
 			_roleStore = new MartenRoleStore<IdentityRole>(_documentStore.Object, new NullLogger<MartenRoleStore<IdentityRole>>());
@@ -34,8 +37,7 @@ namespace MartenAspNetIdentity.Tests.Unit
 		public async Task GetRoleIdAsync()
 		{
 			// given
-			var identityRole = new IdentityRole("chief bin collector");
-			identityRole.Id = "my id";
+			var identityRole = _fixture.Create<IdentityRole>();
 
 			// when
 			string id = await _roleStore.GetRoleIdAsync(identityRole, CancellationToken.None);
@@ -48,7 +50,7 @@ namespace MartenAspNetIdentity.Tests.Unit
 		public async Task GetRoleNameAsync()
 		{
 			// given
-			var identityRole = new IdentityRole("chief bin collector");
+			var identityRole = _fixture.Create<IdentityRole>();
 
 			// when
 			string roleName = await _roleStore.GetRoleNameAsync(identityRole, CancellationToken.None);
@@ -61,7 +63,7 @@ namespace MartenAspNetIdentity.Tests.Unit
 		public async Task SetRoleNameAsync()
 		{
 			// given
-			var identityRole = new IdentityRole("chief bin collector");
+			var identityRole = _fixture.Create<IdentityRole>();
 			string expectedRoleName = "new role name";
 
 			// when
@@ -75,8 +77,7 @@ namespace MartenAspNetIdentity.Tests.Unit
 		public async Task GetNormalizedRoleNameAsync()
 		{
 			// given
-			var identityRole = new IdentityRole("chief bin collector");
-			identityRole.NormalizedName = "normalized name";
+			var identityRole = _fixture.Create<IdentityRole>();
 
 			// when
 			string normalizedName = await _roleStore.GetNormalizedRoleNameAsync(identityRole, CancellationToken.None);
@@ -89,7 +90,7 @@ namespace MartenAspNetIdentity.Tests.Unit
 		public async Task SetNormalizedRoleNameAsync()
 		{
 			// given
-			var identityRole = new IdentityRole("chief bin collector");
+			var identityRole = _fixture.Create<IdentityRole>();
 			string expectedNormalizedName = "CHIEFBINCOLLECTOR";
 
 			// when
