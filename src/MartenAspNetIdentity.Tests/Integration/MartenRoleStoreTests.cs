@@ -91,6 +91,7 @@ namespace MartenAspNetIdentity.Tests.Integration
 			// given
 			string roleName = "super root admin";
 			var expectedRole = new IdentityRole(roleName);
+			await _roleStore.CreateAsync(expectedRole, CancellationToken.None);
 
 			// when
 			IdentityRole actualRole = await _roleStore.FindByNameAsync(roleName, CancellationToken.None);
@@ -106,6 +107,7 @@ namespace MartenAspNetIdentity.Tests.Integration
 			// given
 			string id = "super root admin";
 			var expectedRole = new IdentityRole(id);
+			await _roleStore.CreateAsync(expectedRole, CancellationToken.None);
 
 			// when
 			IdentityRole actualRole = await _roleStore.FindByIdAsync(id, CancellationToken.None);
