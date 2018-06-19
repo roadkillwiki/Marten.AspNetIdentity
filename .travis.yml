@@ -15,7 +15,7 @@ addons:
 
 before_script:
   - psql -c 'create database aspnetidentity;' -U postgres
-  - psql -c 'CREATE USER aspnetidentity WITH PASSWORD 'aspnetidentity';' -U postgres
+  - psql -c 'CREATE USER aspnetidentity WITH PASSWORD aspnetidentity;' -U postgres
   - psql -c 'ALTER USER aspnetidentity WITH SUPERUSER;' -U postgres
 
 script:

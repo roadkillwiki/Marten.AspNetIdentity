@@ -52,7 +52,7 @@ namespace MartenAspNetIdentity.Tests.Integration
 		public async Task CreateAsync()
 		{
 			// given
-			var identityRole = new IdentityRole("chief bin collector");
+			var identityRole = new IdentityRole("root administrator sa");
 			identityRole.NormalizedName = identityRole.Name;
 
 			// when
@@ -85,8 +85,34 @@ namespace MartenAspNetIdentity.Tests.Integration
 			role.Name.ShouldBe(updatedRole.Name);
 		}
 
-		// FindByNameAsync
-		// FindByIdAsync
-		// FindByNameAsync
+		[Fact]
+		public async Task FindByNameAsync()
+		{
+			// given
+			string roleName = "super root admin";
+			var expectedRole = new IdentityRole(roleName);
+
+			// when
+			IdentityRole actualRole = await _roleStore.FindByNameAsync(roleName, CancellationToken.None);
+
+			// then
+			actualRole.ShouldNotBeNull();
+			actualRole.Name.ShouldBe(expectedRole.Name);
+		}
+
+		[Fact]
+		public async Task FindByIdAsync()
+		{
+			// given
+			string id = "super root admin";
+			var expectedRole = new IdentityRole(id);
+
+			// when
+			IdentityRole actualRole = await _roleStore.FindByIdAsync(id, CancellationToken.None);
+
+			// then
+			actualRole.ShouldNotBeNull();
+			actualRole.Id.ShouldBe(expectedRole.Id);
+		}
 	}
 }
