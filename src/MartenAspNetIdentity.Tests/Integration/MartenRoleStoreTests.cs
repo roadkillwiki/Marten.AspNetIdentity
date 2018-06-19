@@ -90,7 +90,9 @@ namespace MartenAspNetIdentity.Tests.Integration
 		{
 			// given
 			string roleName = "super root admin";
-			var expectedRole = new IdentityRole(roleName);
+			var expectedRole = new IdentityRole();
+			expectedRole.Name = roleName;
+			expectedRole.NormalizedName = roleName;
 			await _roleStore.CreateAsync(expectedRole, CancellationToken.None);
 
 			// when
@@ -106,7 +108,8 @@ namespace MartenAspNetIdentity.Tests.Integration
 		{
 			// given
 			string id = "super root admin";
-			var expectedRole = new IdentityRole(id);
+			var expectedRole = new IdentityRole("name");
+			expectedRole.Id = id;
 			await _roleStore.CreateAsync(expectedRole, CancellationToken.None);
 
 			// when
