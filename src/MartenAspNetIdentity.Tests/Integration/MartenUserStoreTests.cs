@@ -91,11 +91,13 @@ namespace MartenAspNetIdentity.Tests.Integration
 			await _userStore.CreateAsync(identityUser, CancellationToken.None);
 
 			// when
-			IdentityUser actualUser = await _userStore.FindByNameAsync(identityUser.UserName, CancellationToken.None);
+			IdentityUser actualUser = await _userStore.FindByNameAsync(identityUser.NormalizedUserName, CancellationToken.None);
 
 			// then
 			actualUser.ShouldNotBeNull();
-			actualUser.UserName.ShouldBe(identityUser.UserName);
+			actualUser.Id.ShouldBe(identityUser.Id);
+			actualUser.Email.ShouldBe(identityUser.Email);
+			actualUser.NormalizedUserName.ShouldBe(identityUser.NormalizedUserName);
 		}
 
 		[Fact]
@@ -103,14 +105,16 @@ namespace MartenAspNetIdentity.Tests.Integration
 		{
 			// given
 			var identityUser = _fixture.Create<IdentityUser>();
-			await _userStore.CreateAsync(identityUser, CancellationToken.None);
+			var result = await _userStore.CreateAsync(identityUser, CancellationToken.None);
 
 			// when
-			IdentityUser actualUser = await _userStore.FindByEmailAsync(identityUser.Email, CancellationToken.None);
+			IdentityUser actualUser = await _userStore.FindByEmailAsync(identityUser.NormalizedEmail, CancellationToken.None);
 
 			// then
 			actualUser.ShouldNotBeNull();
-			actualUser.UserName.ShouldBe(identityUser.Email);
+			actualUser.Id.ShouldBe(identityUser.Id);
+			actualUser.Email.ShouldBe(identityUser.Email);
+			actualUser.NormalizedEmail.ShouldBe(identityUser.NormalizedEmail);
 		}
 
 		[Fact]
