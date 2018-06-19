@@ -25,4 +25,4 @@ script:
    - dotnet test
    - popd
    - dotnet pack -c Release /p:PackageVersion=1.0.$TRAVIS_BUILD_NUMBER
-   - dotnet nuget push "MartenAspNetIdentity.1.0.$TRAVIS_BUILD_NUMBER.nupkg" --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json
+   - dotnet nuget push "src/MartenAspNetIdentity/bin/Release/MartenAspNetIdentity.1.0.$TRAVIS_BUILD_NUMBER.nupkg" --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json
