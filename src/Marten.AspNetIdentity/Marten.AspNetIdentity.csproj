@@ -7,6 +7,8 @@
     <RepositoryUrl>https://github.com/yetanotherchris/MartenAspNetIdentity</RepositoryUrl>
     <PackageTags>marten aspnetidentity</PackageTags>
     <PackageIconUrl>http://jasperfx.github.io/marten/content/images/emblem.png</PackageIconUrl>
+    <Authors>Chris Small</Authors>
+    <Company />
   </PropertyGroup>
 
   <ItemGroup>
