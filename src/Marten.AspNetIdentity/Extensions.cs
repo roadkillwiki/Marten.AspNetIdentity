@@ -22,7 +22,9 @@ namespace Marten.AspNetIdentity
 
 			builder = builder
 						  .AddRoleStore<MartenRoleStore<TRole>>()
-						  .AddUserStore<MartenUserStore<TUser>>();
+						  .AddRoleManager<RoleManager<TRole>>()
+						  .AddUserStore<MartenUserStore<TUser>>()
+						  .AddUserManager<UserManager<TUser>>();
 
 			builder.Services.AddSingleton<IDocumentStore>(documentStore);
 
@@ -33,8 +35,11 @@ namespace Marten.AspNetIdentity
 												where TUser : IdentityUser
 												where TRole : IdentityRole
 		{
-			return builder.AddRoleStore<MartenRoleStore<TRole>>()
-						  .AddUserStore<MartenUserStore<TUser>>();
+			return builder
+						.AddRoleStore<MartenRoleStore<TRole>>()
+						.AddRoleManager<RoleManager<TRole>>()
+						.AddUserStore<MartenUserStore<TUser>>()
+						.AddUserManager<UserManager<TUser>>();
 		}
 
 		public static IDocumentStore CreateDocumentStore(string connectionString, string databaseSchemaName = "aspnetidentity",
