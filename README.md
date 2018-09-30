@@ -1,3 +1,5 @@
+[![NuGet](https://img.shields.io/nuget/dt/Marten.AspNetIdentity.svg)](https://www.nuget.org/packages/Marten.AspNetIdentity/)
+
 # MartenAspNetIdentity
 
 MartenAspNetIdentity is a [Marten DocumentDb](http://jasperfx.github.io/marten/) implementation of [Microsoft.AspNetCore.Identity](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity?view=aspnetcore-2.1).
