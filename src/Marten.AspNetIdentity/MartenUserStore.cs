@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -13,11 +14,21 @@ namespace Marten.AspNetIdentity
 										  IUserPhoneNumberStore<TUser>,
 										  IUserTwoFactorStore<TUser>,
 										  IUserAuthenticatorKeyStore<TUser>,
-										  IUserTwoFactorRecoveryCodeStore<TUser>
+										  IUserTwoFactorRecoveryCodeStore<TUser>,
+										  IQueryableUserStore<TUser>
 										where TUser : IdentityUser
 	{
 		private readonly IDocumentStore _documentStore;
 		private readonly ILogger _logger;
+
+		public IQueryable<TUser> Users
+		{
+			get
+			{
+				IDocumentSession session = _documentStore.LightweightSession();
+				return session.Query<TUser>();
+			}
+		}
 
 		public MartenUserStore(IDocumentStore documentStore, ILogger<MartenUserStore<TUser>> logger)
 		{

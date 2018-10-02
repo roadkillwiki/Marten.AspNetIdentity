@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
@@ -129,6 +130,23 @@ namespace Marten.AspNetIdentity.Tests.Integration
 			// then
 			actualUser.ShouldNotBeNull();
 			actualUser.Id.ShouldBe(identityUser.Id);
+		}
+
+		[Fact]
+		public async Task Users_IQueryable()
+		{
+			// given
+			List<IdentityUser> testUsers = await AddFiveUsers();
+			IdentityUser identityUser = testUsers.First();
+
+			// when
+			IdentityUser actualUser = _userStore.Users.First(x => x.Id == identityUser.Id);
+
+			// then
+			actualUser.ShouldNotBeNull();
+			actualUser.Id.ShouldBe(identityUser.Id);
+			actualUser.Email.ShouldBe(identityUser.Email);
+			actualUser.NormalizedEmail.ShouldBe(identityUser.NormalizedEmail);
 		}
 	}
 }

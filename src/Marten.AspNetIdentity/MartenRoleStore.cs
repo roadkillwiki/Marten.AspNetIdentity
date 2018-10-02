@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -6,10 +7,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Marten.AspNetIdentity
 {
-	public class MartenRoleStore<TRole> : IRoleStore<TRole> where TRole : IdentityRole
+	public class MartenRoleStore<TRole> : IRoleStore<TRole>, IQueryableRoleStore<TRole> where TRole : IdentityRole
 	{
 		private readonly IDocumentStore _documentStore;
 		private readonly ILogger _logger;
+
+		public IQueryable<TRole> Roles
+		{
+			get
+			{
+				IDocumentSession session = _documentStore.LightweightSession();
+				return session.Query<TRole>();
+			}
+		}
 
 		public MartenRoleStore(IDocumentStore documentStore, ILogger<MartenRoleStore<TRole>> logger)
 		{

@@ -119,5 +119,22 @@ namespace Marten.AspNetIdentity.Tests.Integration
 			actualRole.ShouldNotBeNull();
 			actualRole.Id.ShouldBe(expectedRole.Id);
 		}
+
+		[Fact]
+		public async Task Roles_IQueryable()
+		{
+			// given
+			List<IdentityRole> roles = await AddFiveRoles();
+			IdentityRole expectedRole = roles.First();
+
+			// when
+			IdentityRole actualRole = _roleStore.Roles.First(x => x.Id == expectedRole.Id);
+
+			// then
+			actualRole.ShouldNotBeNull();
+			actualRole.Id.ShouldBe(expectedRole.Id);
+			actualRole.Name.ShouldBe(expectedRole.Name);
+			actualRole.NormalizedName.ShouldBe(expectedRole.NormalizedName);
+		}
 	}
 }
