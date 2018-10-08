@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoFixture;
+using AutoFixture.Xunit2;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging.Abstractions;
 using Shouldly;
@@ -13,140 +14,263 @@ namespace Marten.AspNetIdentity.Tests.Integration
 {
 	public class MartenUserStoreTests
 	{
-		//
-		// These tests require a postgres server, the Docker command is:
-		//
-		// $> docker run -d -p 5432:5432 --name aspnetidentity-postgres -e POSTGRES_USER=aspnetidentity -e POSTGRES_PASSWORD=aspnetidentity postgres
-		//
-
 		private readonly ITestOutputHelper _testOutputHelper;
-		private MartenUserStore<IdentityUser> _userStore;
-		private Fixture _fixture;
+		private MartenUserStore<TestUser> _userStore;
 
 		public MartenUserStoreTests(ITestOutputHelper testOutputHelper)
 		{
 			_testOutputHelper = testOutputHelper;
-			_fixture = new Fixture();
 
 			var store = DocumentStoreManager.GetMartenDocumentStore(typeof(MartenUserStoreTests));
-			_userStore = new MartenUserStore<IdentityUser>(store, new NullLogger<MartenUserStore<IdentityUser>>());
+			_userStore = new MartenUserStore<TestUser>(store, new NullLogger<MartenUserStore<TestUser>>());
+			_userStore.Wipe();
 		}
 
-		public async Task<List<IdentityUser>> AddFiveUsers()
+		public async Task<List<TestUser>> AddFiveUsers()
 		{
-			var usersList = new List<IdentityUser>();
+			var usersList = new List<TestUser>();
 			for (int i = 1; i <= 5; i++)
 			{
-				var identityUser = new IdentityUser($"User {i}");
-				identityUser.NormalizedUserName = identityUser.UserName;
-				identityUser.Id = identityUser.Id;
-				await _userStore.CreateAsync(identityUser, CancellationToken.None);
+				var testUser = new TestUser() { UserName = $"User {i}" };
+				testUser.NormalizedUserName = testUser.UserName;
+				testUser.Id = testUser.Id;
+				await _userStore.CreateAsync(testUser, CancellationToken.None);
 
-				usersList.Add(identityUser);
+				usersList.Add(testUser);
 			}
 
 			return usersList;
 		}
 
-		[Fact]
-		public async Task CreateAsync()
+		[Theory]
+		[AutoData]
+		public async Task CreateAsync(TestUser testUser)
 		{
 			// given
-			var identityUser = _fixture.Create<IdentityUser>();
 
 			// when
-			IdentityResult result = await _userStore.CreateAsync(identityUser, CancellationToken.None);
+			IdentityResult result = await _userStore.CreateAsync(testUser, CancellationToken.None);
 
 			// then
 			result.ShouldBe(IdentityResult.Success);
 
-			IdentityUser role = await _userStore.FindByNameAsync(identityUser.NormalizedUserName, CancellationToken.None);
-			role.ShouldNotBeNull();
+			TestUser user = await _userStore.FindByNameAsync(testUser.NormalizedUserName, CancellationToken.None);
+			user.ShouldNotBeNull();
 		}
 
-		[Fact]
-		public async Task UpdateAsync()
+		[Theory]
+		[AutoData]
+		public async Task UpdateAsync(TestUser testUser)
 		{
 			// given
-			var identityUser = _fixture.Create<IdentityUser>();
-			await _userStore.CreateAsync(identityUser, CancellationToken.None);
-			identityUser.UserName = "new name";
+			await _userStore.CreateAsync(testUser, CancellationToken.None);
+			testUser.UserName = "new name";
 
 			// when
-			IdentityResult result = await _userStore.UpdateAsync(identityUser, CancellationToken.None);
+			IdentityResult result = await _userStore.UpdateAsync(testUser, CancellationToken.None);
 
 			// then
 			result.ShouldBe(IdentityResult.Success);
 
-			IdentityUser actualUserName = await _userStore.FindByIdAsync(identityUser.Id, CancellationToken.None);
+			TestUser actualUserName = await _userStore.FindByIdAsync(testUser.Id, CancellationToken.None);
 			actualUserName.ShouldNotBeNull();
-			actualUserName.UserName.ShouldBe(identityUser.UserName);
+			actualUserName.UserName.ShouldBe(testUser.UserName);
 		}
 
-		[Fact]
-		public async Task FindByNameAsync()
+		[Theory]
+		[AutoData]
+		public async Task FindByNameAsync(TestUser testUser)
 		{
 			// given
-			var identityUser = _fixture.Create<IdentityUser>();
-			await _userStore.CreateAsync(identityUser, CancellationToken.None);
+			await _userStore.CreateAsync(testUser, CancellationToken.None);
 
 			// when
-			IdentityUser actualUser = await _userStore.FindByNameAsync(identityUser.NormalizedUserName, CancellationToken.None);
+			TestUser actualUser = await _userStore.FindByNameAsync(testUser.NormalizedUserName, CancellationToken.None);
 
 			// then
 			actualUser.ShouldNotBeNull();
-			actualUser.Id.ShouldBe(identityUser.Id);
-			actualUser.Email.ShouldBe(identityUser.Email);
-			actualUser.NormalizedUserName.ShouldBe(identityUser.NormalizedUserName);
+			actualUser.Id.ShouldBe(testUser.Id);
+			actualUser.Email.ShouldBe(testUser.Email);
+			actualUser.NormalizedUserName.ShouldBe(testUser.NormalizedUserName);
 		}
 
-		[Fact]
-		public async Task FindByEmailAsync()
+		[Theory]
+		[AutoData]
+		public async Task FindByEmailAsync(TestUser testUser)
 		{
 			// given
-			var identityUser = _fixture.Create<IdentityUser>();
-			var result = await _userStore.CreateAsync(identityUser, CancellationToken.None);
+			var result = await _userStore.CreateAsync(testUser, CancellationToken.None);
 
 			// when
-			IdentityUser actualUser = await _userStore.FindByEmailAsync(identityUser.NormalizedEmail, CancellationToken.None);
+			TestUser actualUser = await _userStore.FindByEmailAsync(testUser.NormalizedEmail, CancellationToken.None);
 
 			// then
 			actualUser.ShouldNotBeNull();
-			actualUser.Id.ShouldBe(identityUser.Id);
-			actualUser.Email.ShouldBe(identityUser.Email);
-			actualUser.NormalizedEmail.ShouldBe(identityUser.NormalizedEmail);
+			actualUser.Id.ShouldBe(testUser.Id);
+			actualUser.Email.ShouldBe(testUser.Email);
+			actualUser.NormalizedEmail.ShouldBe(testUser.NormalizedEmail);
 		}
 
-		[Fact]
-		public async Task FindByIdAsync()
+		[Theory]
+		[AutoData]
+		public async Task FindByIdAsync(TestUser testUser)
 		{
 			// given
-			var identityUser = _fixture.Create<IdentityUser>();
-			await _userStore.CreateAsync(identityUser, CancellationToken.None);
+			await _userStore.CreateAsync(testUser, CancellationToken.None);
 
 			// when
-			IdentityUser actualUser = await _userStore.FindByIdAsync(identityUser.Id, CancellationToken.None);
+			TestUser actualUser = await _userStore.FindByIdAsync(testUser.Id, CancellationToken.None);
 
 			// then
 			actualUser.ShouldNotBeNull();
-			actualUser.Id.ShouldBe(identityUser.Id);
+			actualUser.Id.ShouldBe(testUser.Id);
 		}
 
 		[Fact]
 		public async Task Users_IQueryable()
 		{
 			// given
-			List<IdentityUser> testUsers = await AddFiveUsers();
-			IdentityUser identityUser = testUsers.First();
+			List<TestUser> testUsers = await AddFiveUsers();
+			TestUser testUser = testUsers.First();
 
 			// when
-			IdentityUser actualUser = _userStore.Users.First(x => x.Id == identityUser.Id);
+			TestUser actualUser = _userStore.Users.First(x => x.Id == testUser.Id);
 
 			// then
 			actualUser.ShouldNotBeNull();
-			actualUser.Id.ShouldBe(identityUser.Id);
-			actualUser.Email.ShouldBe(identityUser.Email);
-			actualUser.NormalizedEmail.ShouldBe(identityUser.NormalizedEmail);
+			actualUser.Id.ShouldBe(testUser.Id);
+			actualUser.Email.ShouldBe(testUser.Email);
+			actualUser.NormalizedEmail.ShouldBe(testUser.NormalizedEmail);
+		}
+
+		[Theory]
+		[AutoData]
+		public async Task AddClaimsAsync(TestUser testUser)
+		{
+			// given
+			var claims = new List<Claim>()
+			{
+				new Claim("ClaimA", "CanRead"),
+				new Claim("ClaimA", "CanWrite")
+			};
+
+			// when
+			await _userStore.AddClaimsAsync(testUser, claims, CancellationToken.None);
+
+			// then
+			TestUser user = await _userStore.FindByNameAsync(testUser.NormalizedUserName, CancellationToken.None);
+			user.Claims.ShouldNotBeNull();
+			user.Claims.Count.ShouldBe(2);
+		}
+
+		[Theory]
+		[AutoData]
+		public async Task ReplaceClaimAsync(TestUser testUser)
+		{
+			// given
+			var oldClaim = new Claim("ClaimA", "PowerfulAdmin");
+			var newClaim = new Claim("ClaimA", "LonelyGrunt");
+
+			var claims = new List<Claim>()
+			{
+				new Claim("ClaimA", "CanRead"),
+				new Claim("ClaimA", "CanWrite"),
+				oldClaim
+			};
+
+			await _userStore.AddClaimsAsync(testUser, claims, CancellationToken.None);
+
+			// when
+			await _userStore.ReplaceClaimAsync(testUser, oldClaim, newClaim, CancellationToken.None);
+
+			// then
+			TestUser actualUser = await _userStore.FindByNameAsync(testUser.NormalizedUserName, CancellationToken.None);
+			actualUser.Claims.ShouldNotBeNull();
+			actualUser.Claims.Count.ShouldBe(3);
+
+			var userClaims = actualUser.Claims.Select(x => MartenUserStore<TestUser>.BytesToClaim(x));
+			userClaims.ShouldContain(x => x.Value == "LonelyGrunt");
+			userClaims.ShouldNotContain(x => x.Value == "PowerfulAdmin");
+		}
+
+		[Theory]
+		[AutoData]
+		public async Task RemoveClaimsAsync(TestUser testUser)
+		{
+			// given
+			var canWriteClaim = new Claim("ClaimA", "CanWrite");
+			var canReadClaim = new Claim("ClaimA", "CanRead");
+			var isAdminClaim = new Claim("ClaimA", "IsAdmin");
+
+			var claims = new List<Claim>()
+			{
+				canReadClaim,
+				canWriteClaim,
+				isAdminClaim
+			};
+
+			var claimsToRemove = new List<Claim>()
+			{
+				canWriteClaim,
+				isAdminClaim
+			};
+
+			await _userStore.AddClaimsAsync(testUser, claims, CancellationToken.None);
+
+			// when
+			await _userStore.RemoveClaimsAsync(testUser, claimsToRemove, CancellationToken.None);
+
+			// then
+			TestUser actualUser = await _userStore.FindByNameAsync(testUser.NormalizedUserName, CancellationToken.None);
+			actualUser.Claims.ShouldNotBeNull();
+			actualUser.Claims.Count.ShouldBe(1);
+
+			var userClaims = actualUser.Claims.Select(x => MartenUserStore<TestUser>.BytesToClaim(x));
+			userClaims.ShouldNotContain(isAdminClaim);
+			userClaims.ShouldNotContain(canWriteClaim);
+		}
+
+		[Theory]
+		[AutoData]
+		public async Task GetUsersForClaimAsync(List<TestUser> testUsers)
+		{
+			// given
+			var canWriteClaim = new Claim("ClaimA", "CanWrite");
+			var canReadClaim = new Claim("ClaimA", "CanRead");
+			var isAdminClaim = new Claim("ClaimA", "IsAdmin");
+
+			var allClaims = new List<Claim>()
+			{
+				canReadClaim,
+				canWriteClaim,
+				isAdminClaim
+			};
+
+			var justReadClaims = new List<Claim>()
+			{
+				canReadClaim,
+			};
+
+			foreach (TestUser user in testUsers)
+			{
+				await _userStore.CreateAsync(user, CancellationToken.None);
+			}
+
+			await _userStore.AddClaimsAsync(testUsers[0], allClaims, CancellationToken.None);
+			await _userStore.AddClaimsAsync(testUsers[1], allClaims, CancellationToken.None);
+			await _userStore.AddClaimsAsync(testUsers[2], justReadClaims, CancellationToken.None);
+
+			// when
+			IList<TestUser> usersForClaim = await _userStore.GetUsersForClaimAsync(isAdminClaim, CancellationToken.None);
+
+			// then
+			usersForClaim.ShouldNotBeNull();
+			usersForClaim.Count.ShouldBe(2);
+
+			IEnumerable<Claim> userClaims = usersForClaim.First().Claims.Select(x => MartenUserStore<TestUser>.BytesToClaim(x));
+			userClaims.ShouldContain(x => x.Type == canReadClaim.Type && x.Value == canReadClaim.Value);
+			userClaims.ShouldContain(x => x.Type == canWriteClaim.Type && x.Value == canWriteClaim.Value);
+			userClaims.ShouldContain(x => x.Type == isAdminClaim.Type && x.Value == isAdminClaim.Value);
 		}
 	}
 }

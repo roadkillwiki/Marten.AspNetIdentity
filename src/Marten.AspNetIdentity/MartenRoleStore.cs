@@ -7,7 +7,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Marten.AspNetIdentity
 {
-	public class MartenRoleStore<TRole> : IRoleStore<TRole>, IQueryableRoleStore<TRole> where TRole : IdentityRole
+	public class MartenRoleStore<TRole> : IRoleStore<TRole>,
+										  IQueryableRoleStore<TRole> where TRole : IdentityRole
 	{
 		private readonly IDocumentStore _documentStore;
 		private readonly ILogger _logger;

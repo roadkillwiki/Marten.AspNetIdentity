@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Identity;
+﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
-namespace Marten.AspNetIdentity.Example.Data
+namespace Marten.AspNetIdentity.Tests
 {
-	// Add profile data for application users by adding properties to the ApplicationUser class
-	public class ApplicationUser : IdentityUser, IClaimsUser
+	public class TestUser : IdentityUser, IClaimsUser
 	{
 		private List<byte[]> _claims = new List<byte[]>();
 
@@ -23,6 +23,11 @@ namespace Marten.AspNetIdentity.Example.Data
 			{
 				_claims = new List<byte[]>(value);
 			}
+		}
+
+		public TestUser()
+		{
+			Id = Guid.NewGuid().ToString();
 		}
 	}
 }

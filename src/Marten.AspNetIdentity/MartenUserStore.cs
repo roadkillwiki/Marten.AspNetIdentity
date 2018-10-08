@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -15,18 +17,29 @@ namespace Marten.AspNetIdentity
 										  IUserTwoFactorStore<TUser>,
 										  IUserAuthenticatorKeyStore<TUser>,
 										  IUserTwoFactorRecoveryCodeStore<TUser>,
-										  IQueryableUserStore<TUser>
-										where TUser : IdentityUser
+										  IQueryableUserStore<TUser>,
+										  IUserClaimStore<TUser>
+										where TUser : IdentityUser, IClaimsUser
 	{
 		private readonly IDocumentStore _documentStore;
 		private readonly ILogger _logger;
 
+		// IQueryableUserStore<TUser>
 		public IQueryable<TUser> Users
 		{
 			get
 			{
 				IDocumentSession session = _documentStore.LightweightSession();
 				return session.Query<TUser>();
+			}
+		}
+
+		public void Wipe()
+		{
+			using (IDocumentSession session = _documentStore.OpenSession())
+			{
+				session.DeleteWhere<TUser>(x => true);
+				session.SaveChanges();
 			}
 		}
 
@@ -65,6 +78,8 @@ namespace Marten.AspNetIdentity
 
 		public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
 		{
+			cancellationToken.ThrowIfCancellationRequested();
+
 			try
 			{
 				using (IDocumentSession session = _documentStore.OpenSession())
@@ -263,6 +278,127 @@ namespace Marten.AspNetIdentity
 		public Task<int> CountCodesAsync(TUser user, CancellationToken cancellationToken)
 		{
 			return Task.FromResult(5);
+		}
+
+		// IUserClaimStore<TUser>
+
+		public async Task<IList<Claim>> GetClaimsAsync(TUser user, CancellationToken cancellationToken)
+		{
+			using (IDocumentSession session = _documentStore.LightweightSession())
+			{
+				var resolvedUser = await session.Query<TUser>().FirstOrDefaultAsync(x => x.NormalizedEmail == user.NormalizedEmail, cancellationToken);
+
+				var claimsList = new List<Claim>();
+				if (resolvedUser.Claims != null)
+				{
+					foreach (byte[] bytes in resolvedUser.Claims)
+					{
+						claimsList.Add(BytesToClaim(bytes));
+					}
+				}
+
+				return claimsList;
+			}
+		}
+
+		public async Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var claimsAsBytes = new List<byte[]>();
+				foreach (Claim item in claims)
+				{
+					claimsAsBytes.Add(ClaimToBytes(item));
+				}
+
+				user.Claims = claimsAsBytes;
+
+				using (IDocumentSession session = _documentStore.OpenSession())
+				{
+					session.Store(user);
+					await session.SaveChangesAsync(cancellationToken);
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, $"Failed to add claims to the user {user.Email} in Marten.");
+			}
+		}
+
+		public async Task ReplaceClaimAsync(TUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+		{
+			var existingClaims = await GetClaimsAsync(user, cancellationToken);
+			if (existingClaims != null)
+			{
+				List<Claim> claimsList = existingClaims.ToList();
+				int index = claimsList.FindIndex(x => x.Type == claim.Type && x.Value == claim.Value);
+				claimsList.RemoveAt(index);
+				claimsList.Add(newClaim);
+
+				await AddClaimsAsync(user, claimsList, cancellationToken);
+			}
+		}
+
+		public async Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var existingClaims = await GetClaimsAsync(user, cancellationToken);
+				if (existingClaims != null)
+				{
+					var newClaims = existingClaims.ToList();
+					foreach (Claim claimToRemove in claims)
+					{
+						int index = newClaims.FindIndex(x => x.Type == claimToRemove.Type && x.Value == claimToRemove.Value);
+						newClaims.RemoveAt(index);
+					}
+
+					await AddClaimsAsync(user, newClaims, cancellationToken);
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, $"Failed to add claims to the user {user.Email} in Marten.");
+			}
+		}
+
+		public async Task<IList<TUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+		{
+			using (IDocumentSession session = _documentStore.LightweightSession())
+			{
+				byte[] claimAsBytes = ClaimToBytes(claim);
+
+				var readonlyList = await session.Query<TUser>()
+										  .Where(x => x.Claims != null &&
+													  x.Claims.Any(c => c == claimAsBytes))
+										  .ToListAsync();
+
+				return readonlyList.ToList();
+			}
+		}
+
+		public static Claim BytesToClaim(byte[] bytes)
+		{
+			// Don't dispose the stream or reader, the Claim does needs it
+			var memoryStream = new MemoryStream();
+			memoryStream.Write(bytes, 0, bytes.Length);
+			memoryStream.Position = 0;
+
+			var binaryReader = new BinaryReader(memoryStream);
+			return new Claim(binaryReader);
+		}
+
+		public static byte[] ClaimToBytes(Claim claim)
+		{
+			using (var memoryStream = new MemoryStream())
+			{
+				using (var writer = new BinaryWriter(memoryStream))
+				{
+					claim.WriteTo(writer);
+				}
+
+				return memoryStream.ToArray();
+			}
 		}
 	}
 }

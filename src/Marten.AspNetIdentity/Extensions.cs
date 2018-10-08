@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +16,7 @@ namespace Marten.AspNetIdentity
 		/// <param name="postgresConnectionString"></param>
 		/// <returns></returns>
 		public static IdentityBuilder AddMartenStores<TUser, TRole>(this IdentityBuilder builder, string postgresConnectionString)
-													where TUser : IdentityUser
+													where TUser : IdentityUser, IClaimsUser
 													where TRole : IdentityRole
 		{
 			IDocumentStore documentStore = CreateDocumentStore(postgresConnectionString);
@@ -32,7 +33,7 @@ namespace Marten.AspNetIdentity
 		}
 
 		public static IdentityBuilder AddMartenStores<TUser, TRole>(this IdentityBuilder builder)
-												where TUser : IdentityUser
+												where TUser : IdentityUser, IClaimsUser
 												where TRole : IdentityRole
 		{
 			return builder
