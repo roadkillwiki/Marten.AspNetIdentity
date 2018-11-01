@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-    <UserSecretsId>aspnet-Examples.MvcSecurity-ADC7C261-1B6F-4EAB-8654-2C14BC7254E6</UserSecretsId>
-    <RootNamespace>Marten.AspNetIdentity.Example</RootNamespace>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />
-  </ItemGroup>
-  <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.3" />
-    <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.2" />
-    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Marten.AspNetIdentity\Marten.AspNetIdentity.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp2.1</TargetFramework>
+		<UserSecretsId>aspnet-Examples.MvcSecurity-ADC7C261-1B6F-4EAB-8654-2C14BC7254E6</UserSecretsId>
+		<RootNamespace>Marten.AspNetIdentity.Example</RootNamespace>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
+	</ItemGroup>
+	<ItemGroup>
+		<DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.3" />
+		<DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.2" />
+		<DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Marten.AspNetIdentity\Marten.AspNetIdentity.csproj" />
+	</ItemGroup>
 </Project>
