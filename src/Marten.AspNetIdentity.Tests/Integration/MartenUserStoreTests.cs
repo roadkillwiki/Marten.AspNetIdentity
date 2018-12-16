@@ -150,8 +150,9 @@ namespace Marten.AspNetIdentity.Tests.Integration
 			// given
 			var claims = new List<Claim>()
 			{
-				new Claim("ClaimA", "CanRead"),
-				new Claim("ClaimA", "CanWrite")
+				new Claim(ClaimTypes.Role, "CanRead"),
+				new Claim(ClaimTypes.Role, "CanWrite"),
+				new Claim(ClaimTypes.Surname, "This shouldn't be stored")
 			};
 
 			// when
@@ -159,8 +160,8 @@ namespace Marten.AspNetIdentity.Tests.Integration
 
 			// then
 			TestUser user = await _userStore.FindByNameAsync(testUser.NormalizedUserName, CancellationToken.None);
-			user.Claims.ShouldNotBeNull();
-			user.Claims.Count.ShouldBe(2);
+			user.RoleClaims.ShouldNotBeNull();
+			user.RoleClaims.Count.ShouldBe(2);
 		}
 
 		[Theory]
@@ -168,13 +169,13 @@ namespace Marten.AspNetIdentity.Tests.Integration
 		public async Task ReplaceClaimAsync(TestUser testUser)
 		{
 			// given
-			var oldClaim = new Claim("ClaimA", "PowerfulAdmin");
-			var newClaim = new Claim("ClaimA", "LonelyGrunt");
+			var oldClaim = new Claim(ClaimTypes.Role, "PowerfulAdmin");
+			var newClaim = new Claim(ClaimTypes.Role, "LonelyGrunt");
 
 			var claims = new List<Claim>()
 			{
-				new Claim("ClaimA", "CanRead"),
-				new Claim("ClaimA", "CanWrite"),
+				new Claim(ClaimTypes.Role, "CanRead"),
+				new Claim(ClaimTypes.Role, "CanWrite"),
 				oldClaim
 			};
 
@@ -185,12 +186,12 @@ namespace Marten.AspNetIdentity.Tests.Integration
 
 			// then
 			TestUser actualUser = await _userStore.FindByNameAsync(testUser.NormalizedUserName, CancellationToken.None);
-			actualUser.Claims.ShouldNotBeNull();
-			actualUser.Claims.Count.ShouldBe(3);
+			actualUser.RoleClaims.ShouldNotBeNull();
+			actualUser.RoleClaims.Count.ShouldBe(3);
 
-			var userClaims = actualUser.Claims.Select(x => MartenUserStore<TestUser>.BytesToClaim(x));
-			userClaims.ShouldContain(x => x.Value == "LonelyGrunt");
-			userClaims.ShouldNotContain(x => x.Value == "PowerfulAdmin");
+			var userClaims = actualUser.RoleClaims;
+			userClaims.ShouldContain("LonelyGrunt");
+			userClaims.ShouldNotContain("PowerfulAdmin");
 		}
 
 		[Theory]
@@ -198,9 +199,9 @@ namespace Marten.AspNetIdentity.Tests.Integration
 		public async Task RemoveClaimsAsync(TestUser testUser)
 		{
 			// given
-			var canWriteClaim = new Claim("ClaimA", "CanWrite");
-			var canReadClaim = new Claim("ClaimA", "CanRead");
-			var isAdminClaim = new Claim("ClaimA", "IsAdmin");
+			var canWriteClaim = new Claim(ClaimTypes.Role, "CanWrite");
+			var canReadClaim = new Claim(ClaimTypes.Role, "CanRead");
+			var isAdminClaim = new Claim(ClaimTypes.Role, "IsAdmin");
 
 			var claims = new List<Claim>()
 			{
@@ -222,12 +223,12 @@ namespace Marten.AspNetIdentity.Tests.Integration
 
 			// then
 			TestUser actualUser = await _userStore.FindByNameAsync(testUser.NormalizedUserName, CancellationToken.None);
-			actualUser.Claims.ShouldNotBeNull();
-			actualUser.Claims.Count.ShouldBe(1);
+			actualUser.RoleClaims.ShouldNotBeNull();
+			actualUser.RoleClaims.Count.ShouldBe(1);
 
-			var userClaims = actualUser.Claims.Select(x => MartenUserStore<TestUser>.BytesToClaim(x));
-			userClaims.ShouldNotContain(isAdminClaim);
-			userClaims.ShouldNotContain(canWriteClaim);
+			var userClaims = actualUser.RoleClaims;
+			userClaims.ShouldNotContain(isAdminClaim.Value);
+			userClaims.ShouldNotContain(canWriteClaim.Value);
 		}
 
 		[Theory]
@@ -235,18 +236,18 @@ namespace Marten.AspNetIdentity.Tests.Integration
 		public async Task GetUsersForClaimAsync(List<TestUser> testUsers)
 		{
 			// given
-			var canWriteClaim = new Claim("ClaimA", "CanWrite");
-			var canReadClaim = new Claim("ClaimA", "CanRead");
-			var isAdminClaim = new Claim("ClaimA", "IsAdmin");
+			var canWriteClaim = new Claim(ClaimTypes.Role, "CanWrite");
+			var canReadClaim = new Claim(ClaimTypes.Role, "CanRead");
+			var isAdminClaim = new Claim(ClaimTypes.Role, "IsAdmin");
 
-			var allClaims = new List<Claim>()
+			var readWriteAndAdminClaims = new List<Claim>()
 			{
 				canReadClaim,
 				canWriteClaim,
 				isAdminClaim
 			};
 
-			var justReadClaims = new List<Claim>()
+			var readClaims = new List<Claim>()
 			{
 				canReadClaim,
 			};
@@ -256,9 +257,9 @@ namespace Marten.AspNetIdentity.Tests.Integration
 				await _userStore.CreateAsync(user, CancellationToken.None);
 			}
 
-			await _userStore.AddClaimsAsync(testUsers[0], allClaims, CancellationToken.None);
-			await _userStore.AddClaimsAsync(testUsers[1], allClaims, CancellationToken.None);
-			await _userStore.AddClaimsAsync(testUsers[2], justReadClaims, CancellationToken.None);
+			await _userStore.AddClaimsAsync(testUsers[0], readWriteAndAdminClaims, CancellationToken.None);
+			await _userStore.AddClaimsAsync(testUsers[1], readWriteAndAdminClaims, CancellationToken.None);
+			await _userStore.AddClaimsAsync(testUsers[2], readClaims, CancellationToken.None);
 
 			// when
 			IList<TestUser> usersForClaim = await _userStore.GetUsersForClaimAsync(isAdminClaim, CancellationToken.None);
@@ -267,10 +268,10 @@ namespace Marten.AspNetIdentity.Tests.Integration
 			usersForClaim.ShouldNotBeNull();
 			usersForClaim.Count.ShouldBe(2);
 
-			IEnumerable<Claim> userClaims = usersForClaim.First().Claims.Select(x => MartenUserStore<TestUser>.BytesToClaim(x));
-			userClaims.ShouldContain(x => x.Type == canReadClaim.Type && x.Value == canReadClaim.Value);
-			userClaims.ShouldContain(x => x.Type == canWriteClaim.Type && x.Value == canWriteClaim.Value);
-			userClaims.ShouldContain(x => x.Type == isAdminClaim.Type && x.Value == isAdminClaim.Value);
+			IEnumerable<string> userClaims = usersForClaim.First().RoleClaims;
+			userClaims.ShouldContain(canReadClaim.Value);
+			userClaims.ShouldContain(canWriteClaim.Value);
+			userClaims.ShouldContain(isAdminClaim.Value);
 		}
 	}
 }

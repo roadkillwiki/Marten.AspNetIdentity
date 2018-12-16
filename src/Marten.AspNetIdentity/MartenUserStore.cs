@@ -289,11 +289,11 @@ namespace Marten.AspNetIdentity
 				var resolvedUser = await session.Query<TUser>().FirstOrDefaultAsync(x => x.NormalizedEmail == user.NormalizedEmail, cancellationToken);
 
 				var claimsList = new List<Claim>();
-				if (resolvedUser.Claims != null)
+				if (resolvedUser.RoleClaims != null)
 				{
-					foreach (byte[] bytes in resolvedUser.Claims)
+					foreach (string roleClaim in resolvedUser.RoleClaims)
 					{
-						claimsList.Add(BytesToClaim(bytes));
+						claimsList.Add(new Claim(ClaimTypes.Role, roleClaim));
 					}
 				}
 
@@ -305,13 +305,16 @@ namespace Marten.AspNetIdentity
 		{
 			try
 			{
-				var claimsAsBytes = new List<byte[]>();
-				foreach (Claim item in claims)
+				var userRoleClaims = new List<string>();
+				foreach (Claim claimItem in claims)
 				{
-					claimsAsBytes.Add(ClaimToBytes(item));
+					if (claimItem.Type == ClaimTypes.Role)
+					{
+						userRoleClaims.Add(claimItem.Value);
+					}
 				}
 
-				user.Claims = claimsAsBytes;
+				user.RoleClaims = userRoleClaims;
 
 				using (IDocumentSession session = _documentStore.OpenSession())
 				{
@@ -327,11 +330,16 @@ namespace Marten.AspNetIdentity
 
 		public async Task ReplaceClaimAsync(TUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
 		{
+			if (claim.Type != ClaimTypes.Role || newClaim.Type != ClaimTypes.Role)
+			{
+				return;
+			}
+			
 			var existingClaims = await GetClaimsAsync(user, cancellationToken);
 			if (existingClaims != null)
 			{
 				List<Claim> claimsList = existingClaims.ToList();
-				int index = claimsList.FindIndex(x => x.Type == claim.Type && x.Value == claim.Value);
+				int index = claimsList.FindIndex(x => x.Value == claim.Value);
 				claimsList.RemoveAt(index);
 				claimsList.Add(newClaim);
 
@@ -366,38 +374,11 @@ namespace Marten.AspNetIdentity
 		{
 			using (IDocumentSession session = _documentStore.LightweightSession())
 			{
-				byte[] claimAsBytes = ClaimToBytes(claim);
-
-				var readonlyList = await session.Query<TUser>()
-										  .Where(x => x.Claims != null &&
-													  x.Claims.Any(c => c == claimAsBytes))
-										  .ToListAsync();
+				IReadOnlyList<TUser> readonlyList = await session.Query<TUser>()
+															.Where(x => x.RoleClaims.Contains(claim.Value))
+															.ToListAsync(cancellationToken);
 
 				return readonlyList.ToList();
-			}
-		}
-
-		public static Claim BytesToClaim(byte[] bytes)
-		{
-			// Don't dispose the stream or reader, the Claim does needs it
-			var memoryStream = new MemoryStream();
-			memoryStream.Write(bytes, 0, bytes.Length);
-			memoryStream.Position = 0;
-
-			var binaryReader = new BinaryReader(memoryStream);
-			return new Claim(binaryReader);
-		}
-
-		public static byte[] ClaimToBytes(Claim claim)
-		{
-			using (var memoryStream = new MemoryStream())
-			{
-				using (var writer = new BinaryWriter(memoryStream))
-				{
-					claim.WriteTo(writer);
-				}
-
-				return memoryStream.ToArray();
 			}
 		}
 	}

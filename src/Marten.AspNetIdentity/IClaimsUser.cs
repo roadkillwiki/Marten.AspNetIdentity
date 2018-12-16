@@ -4,6 +4,6 @@ namespace Marten.AspNetIdentity
 {
 	public interface IClaimsUser
 	{
-		IList<byte[]> Claims { get; set; }
+		IList<string> RoleClaims { get; set; }
 	}
 }
