@@ -50,7 +50,6 @@ namespace Marten.AspNetIdentity
 			{
 				options.CreateDatabasesForTenants(c =>
 				{
-					c.MaintenanceDatabase(connectionString);
 					c.ForTenant()
 						.CheckAgainstPgDatabase()
 						.WithOwner(databaseOwner)

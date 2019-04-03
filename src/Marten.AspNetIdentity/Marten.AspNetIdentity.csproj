@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<Description>A Marten implementation of the ASP.NET Core Identity stores.</Description>
-		<PackageProjectUrl>https://github.com/yetanotherchris/MartenAspNetIdentity</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/roadkillwiki/Marten.AspNetIdentity</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/yetanotherchris/MartenAspNetIdentity</RepositoryUrl>
 		<PackageTags>marten aspnetidentity</PackageTags>
 		<PackageIconUrl>http://jasperfx.github.io/marten/content/images/emblem.png</PackageIconUrl>
