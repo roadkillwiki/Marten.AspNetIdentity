@@ -33,4 +33,4 @@ services.AddIdentity<ApplicationUser, IdentityRole>()
         .AddDefaultTokenProviders();
 ```
 
-There is a full example in this repository under the [Example project](https://github.com/yetanotherchris/Marten.AspNetIdentity/tree/master/src/Marten.AspNetIdentity.Example)
+There is a full example in this repository under the [Example project](https://github.com/roadkillwiki/Marten.AspNetIdentity/tree/master/src/Marten.AspNetIdentity.Example)
