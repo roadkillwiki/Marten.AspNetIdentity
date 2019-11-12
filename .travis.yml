@@ -1,5 +1,5 @@
-language: csharp 
-dist: trusty
+language: csharp
+dist: xenial
 mono: none
 dotnet: 3.0
 
