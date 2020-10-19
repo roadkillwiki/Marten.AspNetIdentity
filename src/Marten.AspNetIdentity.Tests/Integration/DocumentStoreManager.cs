@@ -8,7 +8,7 @@ namespace Marten.AspNetIdentity.Tests.Integration
 		private static readonly ConcurrentDictionary<string, IDocumentStore> _documentStores = new ConcurrentDictionary<string, IDocumentStore>();
 		public static string ConnectionString => "host=localhost;port=5432;database=aspnetidentity;username=aspnetidentity;password=aspnetidentity;";
 
-		public static IDocumentStore GetMartenDocumentStore(Type testClassType)
+		public static IDocumentStore GetMartenDocumentStore(Type testClassType, string connectionString = null)
 		{
 			string documentStoreSchemaName = "";
 
@@ -17,7 +17,7 @@ namespace Marten.AspNetIdentity.Tests.Integration
 
 			if (!_documentStores.ContainsKey(documentStoreSchemaName))
 			{
-				IDocumentStore docStore = Extensions.CreateDocumentStore(ConnectionString, documentStoreSchemaName);
+				IDocumentStore docStore = Extensions.CreateDocumentStore(connectionString ?? ConnectionString, documentStoreSchemaName);
 				_documentStores.TryAdd(documentStoreSchemaName, docStore);
 			}
 

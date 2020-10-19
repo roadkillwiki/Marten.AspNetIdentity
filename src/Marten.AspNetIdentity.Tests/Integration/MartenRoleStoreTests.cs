@@ -11,24 +11,18 @@ using Xunit.Abstractions;
 
 namespace Marten.AspNetIdentity.Tests.Integration
 {
-	public class MartenRoleStoreTests
+	public class MartenRoleStoreTests : IClassFixture<PostgresSqlFixture>
 	{
-		//
-		// These tests require a postgres server, the Docker command is:
-		//
-		// $> docker run -d -p 5432:5432 --name aspnetidentity-postgres -e POSTGRES_USER=aspnetidentity -e POSTGRES_PASSWORD=aspnetidentity postgres
-		//
-
 		private readonly ITestOutputHelper _testOutputHelper;
 		private MartenRoleStore<IdentityRole> _roleStore;
 		private Fixture _fixture;
 
-		public MartenRoleStoreTests(ITestOutputHelper testOutputHelper)
+		public MartenRoleStoreTests(ITestOutputHelper testOutputHelper, PostgresSqlFixture postgresSqlFixture)
 		{
 			_testOutputHelper = testOutputHelper;
 			_fixture = new Fixture();
 
-			var store = DocumentStoreManager.GetMartenDocumentStore(typeof(MartenRoleStoreTests));
+			var store = DocumentStoreManager.GetMartenDocumentStore(typeof(MartenRoleStoreTests), postgresSqlFixture.ConnectionString);
 			_roleStore = new MartenRoleStore<IdentityRole>(store, new NullLogger<MartenRoleStore<IdentityRole>>());
 		}
 
