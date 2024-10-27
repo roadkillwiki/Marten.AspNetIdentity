@@ -12,7 +12,7 @@ jobs:
           - 5432:5432
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: !Password12345
+          POSTGRES_PASSWORD: "!Password12345"
           POSTGRES_DB: postgres
       volumes:
         ./docker:/docker-entrypoint-initdb.d
