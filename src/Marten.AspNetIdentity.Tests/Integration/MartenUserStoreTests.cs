@@ -12,16 +12,16 @@ using Xunit.Abstractions;
 
 namespace Marten.AspNetIdentity.Tests.Integration
 {
-	public class MartenUserStoreTests : IClassFixture<PostgresSqlFixture>
+	public class MartenUserStoreTests
 	{
 		private readonly ITestOutputHelper _testOutputHelper;
 		private MartenUserStore<TestUser> _userStore;
 
-		public MartenUserStoreTests(ITestOutputHelper testOutputHelper, PostgresSqlFixture postgresSqlFixture)
+		public MartenUserStoreTests(ITestOutputHelper testOutputHelper)
 		{
 			_testOutputHelper = testOutputHelper;
 
-			var store = DocumentStoreManager.GetMartenDocumentStore(typeof(MartenUserStoreTests), postgresSqlFixture.ConnectionString);
+			var store = DocumentStoreManager.GetMartenDocumentStore(typeof(MartenUserStoreTests), DocumentStoreManager.ConnectionString);
 			_userStore = new MartenUserStore<TestUser>(store, new NullLogger<MartenUserStore<TestUser>>());
 			_userStore.Wipe();
 		}

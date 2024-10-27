@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFramework>netcoreapp8.0</TargetFramework>
 		<Description>A Marten implementation of the ASP.NET Core Identity stores.</Description>
 		<PackageProjectUrl>https://github.com/roadkillwiki/Marten.AspNetIdentity</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/yetanotherchris/MartenAspNetIdentity</RepositoryUrl>
@@ -9,14 +9,15 @@
 		<PackageIconUrl>http://jasperfx.github.io/marten/content/images/emblem.png</PackageIconUrl>
 		<Authors>Chris Small</Authors>
 		<Company />
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Marten" Version="3.10.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Identity.Core" Version="3.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
+		<PackageReference Include="Marten" Version="7.31.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
 	</ItemGroup>
 </Project>

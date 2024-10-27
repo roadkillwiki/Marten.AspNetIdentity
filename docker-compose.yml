@@ -1,0 +1,11 @@
+services:
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=!Password12345
+      - POSTGRES_DB=postgres
+    volumes:
+      - ./docker:/docker-entrypoint-initdb.d

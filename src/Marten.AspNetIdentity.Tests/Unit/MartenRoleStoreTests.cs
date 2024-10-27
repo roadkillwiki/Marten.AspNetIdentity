@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging.Abstractions;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
@@ -12,23 +12,17 @@ namespace Marten.AspNetIdentity.Tests.Unit
 {
 	public class MartenRoleStoreTests
 	{
-		//
-		// These tests require a postgres server, the Docker command is:
-		//
-		// $> docker run -d -p 5432:5432 --name aspnetidentity-postgres -e POSTGRES_USER=aspnetidentity -e POSTGRES_PASSWORD=aspnetidentity postgres
-		//
-
 		private readonly ITestOutputHelper _testOutputHelper;
 		private MartenRoleStore<IdentityRole> _roleStore;
-		private Mock<IDocumentStore> _documentStore;
+		private IDocumentStore _documentStore;
 		private readonly Fixture _fixture;
 
 		public MartenRoleStoreTests(ITestOutputHelper testOutputHelper)
 		{
 			_fixture = new Fixture();
 			_testOutputHelper = testOutputHelper;
-			_documentStore = new Mock<IDocumentStore>();
-			_roleStore = new MartenRoleStore<IdentityRole>(_documentStore.Object, new NullLogger<MartenRoleStore<IdentityRole>>());
+			_documentStore = Substitute.For<IDocumentStore>();
+			_roleStore = new MartenRoleStore<IdentityRole>(_documentStore, new NullLogger<MartenRoleStore<IdentityRole>>());
 		}
 
 		[Fact]

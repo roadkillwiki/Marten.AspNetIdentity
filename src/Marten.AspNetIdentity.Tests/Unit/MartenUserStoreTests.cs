@@ -1,10 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
-using AutoFixture.Xunit2;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging.Abstractions;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
@@ -15,7 +13,7 @@ namespace Marten.AspNetIdentity.Tests.Unit
 	{
 		private ITestOutputHelper _testOutputHelper;
 		private MartenUserStore<TestUser> _userStore;
-		private Mock<IDocumentStore> _documentStore;
+		private IDocumentStore _documentStore;
 		private readonly Fixture _fixture;
 
 		public MartenUserStoreTests(ITestOutputHelper testOutputHelper)
@@ -24,8 +22,8 @@ namespace Marten.AspNetIdentity.Tests.Unit
 			_fixture.Register<TestUser>(() => new TestUser());
 
 			_testOutputHelper = testOutputHelper;
-			_documentStore = new Mock<IDocumentStore>();
-			_userStore = new MartenUserStore<TestUser>(_documentStore.Object, new NullLogger<MartenUserStore<TestUser>>());
+            _documentStore = Substitute.For<IDocumentStore>();
+            _userStore = new MartenUserStore<TestUser>(_documentStore, new NullLogger<MartenUserStore<TestUser>>());
 		}
 
 		[Theory]

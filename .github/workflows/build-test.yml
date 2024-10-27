@@ -1,0 +1,38 @@
+name: Build and test
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: !Password12345
+          POSTGRES_DB: postgres
+      volumes:
+        ./docker:/docker-entrypoint-initdb.d
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      - name: .NET restore & Build
+        run: dotnet build
+
+      - name: .NET test
+        run: dotnet test 
+
+      # Job to run after PR merge:
+      # Version & tag
+      # dotnet Package
+      # nuget push
