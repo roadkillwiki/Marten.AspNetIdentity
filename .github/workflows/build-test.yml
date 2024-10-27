@@ -14,8 +14,8 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: "!Password12345"
           POSTGRES_DB: postgres
-      volumes:
-        ${{ github.workspace }}/docker:/docker-entrypoint-initdb.d
+        volumes:
+          ${{ github.workspace }}/docker:/docker-entrypoint-initdb.d
 
     steps:
       - name: Check out repository code
