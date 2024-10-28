@@ -38,12 +38,12 @@ jobs:
         if: github.event_name == 'pull_request' && github.actor == github.repository_owner
         run: |
           export PACKAGE_VERSION="$VERSION_NUMBER.$GITHUB_RUN_NUMBER-pr-$PR_NUMBER"
-          dotnet pack -c Release /p:PackageVersion=1.0.$PACKAGE_VERSION
+          dotnet pack -c Release /p:PackageVersion=$PACKAGE_VERSION
           dotnet nuget push "src/Marten.AspNetIdentity/bin/Release/Marten.AspNetIdentity.$PACKAGE_VERSION.nupkg" --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json
 
       - name: Nuget - push master package
         if: github.event_name != 'pull_request' && github.actor == github.repository_owner
         run: |
           export PACKAGE_VERSION="$VERSION_NUMBER.$GITHUB_RUN_NUMBER"
-          dotnet pack -c Release /p:PackageVersion=1.0.$PACKAGE_VERSION
+          dotnet pack -c Release /p:PackageVersion=$PACKAGE_VERSION
           dotnet nuget push "src/Marten.AspNetIdentity/bin/Release/Marten.AspNetIdentity.$PACKAGE_VERSION.nupkg" --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json
