@@ -1,29 +1,49 @@
 name: Build and test
-on: push
+on:
+  push:
+    branches: [ "master" ]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.gitignore'
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      VERSION_NUMBER: "2.0"
+      PR_NUMBER: ${{ github.event.number }}
+      NUGET_KEY: ${{ secrets.NUGET_KEY }}
 
     steps:
-      - name: Check out repository code
+      - name: Git - check out repository code
         uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: .NET - setup
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.x'
 
-      - name: .NET restore & Build
+      - name: .NET - restore & Build
         run: dotnet build
 
-      - name: Run Postgres in a Container
+      - name: Docker - run Postgres
         uses: hoverkraft-tech/compose-action@v2.0.1
 
-      - name: .NET test
+      - name: .NET - test
         run: dotnet test 
 
-      # Job to run after PR merge:
-      # Version & tag
-      # dotnet Package
-      # nuget push
+      - name: Nuget - push PR
+        if: github.event_name == 'pull_request' && github.actor == github.repository_owner
+        run: |
+          export PACKAGE_VERSION="$VERSION_NUMBER.$GITHUB_RUN_NUMBER-pr-$PR_NUMBER"
+          dotnet pack -c Release /p:PackageVersion=1.0.$PACKAGE_VERSION
+          dotnet nuget push "src/Marten.AspNetIdentity/bin/Release/Marten.AspNetIdentity.$PACKAGE_VERSION.nupkg" --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json
+
+      - name: Nuget - push PR
+        if: github.event_name != 'pull_request' && github.actor == github.repository_owner
+        run: |
+          export PACKAGE_VERSION="$VERSION_NUMBER.$GITHUB_RUN_NUMBER"
+          dotnet pack -c Release /p:PackageVersion=1.0.$PACKAGE_VERSION
+          dotnet nuget push "src/Marten.AspNetIdentity/bin/Release/Marten.AspNetIdentity.$PACKAGE_VERSION.nupkg" --api-key "$NUGET_KEY" --source https://api.nuget.org/v3/index.json
