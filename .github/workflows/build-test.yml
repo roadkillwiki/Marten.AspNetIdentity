@@ -5,18 +5,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: "!Password12345"
-          POSTGRES_DB: postgres
-        volumes:
-          - ${{ github.workspace }}/docker:/docker-entrypoint-initdb.d
-
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -28,6 +16,9 @@ jobs:
 
       - name: .NET restore & Build
         run: dotnet build
+
+      - name: Run Postgres in a Container
+        uses: hoverkraft-tech/compose-action@v2.0.1
 
       - name: .NET test
         run: dotnet test 
