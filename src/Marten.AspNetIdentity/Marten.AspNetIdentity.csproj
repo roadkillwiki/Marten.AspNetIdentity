@@ -9,7 +9,7 @@
 		<PackageIconUrl>http://jasperfx.github.io/marten/content/images/emblem.png</PackageIconUrl>
 		<Authors>Chris Small</Authors>
 		<Company />
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -20,4 +20,8 @@
 		<PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.10" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
 	</ItemGroup>
+
+	<ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 </Project>
