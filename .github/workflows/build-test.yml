@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VERSION_NUMBER: "2.0"
+      VERSION_NUMBER: "8.0"
       PR_NUMBER: ${{ github.event.number }}
       NUGET_KEY: ${{ secrets.NUGET_KEY }}
 
